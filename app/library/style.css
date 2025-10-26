@@ -1,0 +1,158 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    transition: all 0.3s ease;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.container {
+    max-width: 600px;
+    width: 90%;
+    margin: 0 auto;
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+#welcome-title {
+    color: white;
+    font-size: 2.5rem;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    animation: fadeIn 1s ease-in;
+}
+
+.welcome-card {
+    background: white;
+    padding: 2rem;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    text-align: center;
+    transition: transform 0.3s ease;
+}
+
+.welcome-card:hover {
+    transform: translateY(-5px);
+}
+
+#welcome-message {
+    font-size: 1.2rem;
+    color: #333;
+    margin-bottom: 1.5rem;
+}
+
+.time-display {
+    background: #f8f9fa;
+    padding: 1rem;
+    border-radius: 8px;
+    margin: 1rem 0;
+    border-left: 4px solid #667eea;
+}
+
+#current-time {
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: #333;
+}
+
+.counter-section {
+    margin: 1.5rem 0;
+    padding: 1rem;
+    background: #e9ecef;
+    border-radius: 8px;
+}
+
+#visit-counter {
+    font-weight: bold;
+    color: #667eea;
+    font-size: 1.2rem;
+}
+
+.theme-btn, .color-btn {
+    background: #667eea;
+    color: white;
+    border: none;
+    padding: 0.8rem 1.5rem;
+    margin: 0.5rem;
+    border-radius: 25px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+}
+
+.theme-btn:hover, .color-btn:hover {
+    background: #5a6fd8;
+    transform: scale(1.05);
+}
+
+.footer {
+    text-align: center;
+    margin-top: 2rem;
+    color: white;
+    opacity: 0.8;
+}
+
+/* Modo escuro */
+body.dark-mode {
+    background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+}
+
+body.dark-mode .welcome-card {
+    background: #2c3e50;
+    color: white;
+}
+
+body.dark-mode #welcome-message,
+body.dark-mode #current-time,
+body.dark-mode .counter-section {
+    color: white;
+}
+
+body.dark-mode .time-display,
+body.dark-mode .counter-section {
+    background: #34495e;
+    border-left-color: #3498db;
+}
+
+/* Animações */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.fade-in {
+    animation: fadeIn 0.5s ease-in;
+}
+
+/* Responsivo */
+@media (max-width: 768px) {
+    #welcome-title {
+        font-size: 2rem;
+    }
+    
+    .welcome-card {
+        padding: 1.5rem;
+    }
+    
+    .theme-btn, .color-btn {
+        display: block;
+        width: 100%;
+        margin: 0.5rem 0;
+    }
+}

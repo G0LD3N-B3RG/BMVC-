@@ -1,0 +1,11 @@
+/* BMVC_chat/static/css/pagina.css (exemplo básico – melhore com Bootstrap ou Tailwind se quiser) */
+body { font-family: Arial, sans-serif; background: #f4f4f4; margin: 0; padding: 20px; }
+.container { max-width: 800px; margin: auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+h1, h3 { text-align: center; }
+.chat-box { height: 400px; overflow-y: auto; border: 1px solid #ccc; padding: 10px; margin-bottom: 10px; background: #fff; }
+.chat-box p { margin: 5px 0; }
+.input-area { display: flex; }
+.input-area input { flex: 1; padding: 10px; font-size: 16px; }
+.input-area button { padding: 10px 20px; font-size: 16px; }
+#online-list { list-style: none; padding: 0; text-align: center; }
+#online-list li { display: inline-block; margin: 0 5px; font-weight: bold; }

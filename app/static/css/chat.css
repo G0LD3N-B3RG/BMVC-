@@ -1,0 +1,978 @@
+/* static/css/chat.css */
+/* Ajustes para centralizar a tela de login */
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Open Sans', sans-serif;
+    background: linear-gradient(135deg, #044f48, #2a7561);
+    margin: 0;
+    padding: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    overflow-x: hidden; /* Previne scroll horizontal no body */
+}
+
+/* Ajustes para o container do chat */
+.chat-container {
+    width: 95%; /* Alterado de 100% para 95% para dar uma margem */
+    max-width: 500px; /* Aumentei de 450px para 500px */
+    height: 90vh; /* Aumentei de 80vh para 90vh */
+    max-height: 800px; /* Aumentei o limite máximo */
+    background: rgba(0, 0, 0, 0.5);
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 5px 30px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    margin: 0 auto; /* Centraliza horizontalmente */
+}
+
+/* TELA DE LOGIN - CENTRALIZADA */
+.name-setup {
+    background: rgba(0, 0, 0, 0.6);
+    padding: 40px 30px;
+    text-align: center;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    flex: 1;  /* Preenche espaço disponível */
+    height: 100%;
+    width: 100%;
+}
+
+.name-setup h2 {
+    margin-bottom: 30px;
+    color: #fff;
+    font-size: 28px;
+    font-weight: 300;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.name-setup input {
+    width: 100%;
+    max-width: 280px;
+    padding: 15px 20px;
+    margin-bottom: 25px;
+    border: none;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.15);
+    color: white;
+    font-size: 16px;
+    text-align: center;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.name-setup input::placeholder {
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.name-setup input:focus {
+    outline: none;
+    background: rgba(255, 255, 255, 0.2);
+    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.2);
+    transform: translateY(-2px);
+}
+
+.name-setup button {
+    padding: 15px 30px;
+    border: none;
+    background: linear-gradient(120deg, #248A52, #257287);
+    color: white;
+    border-radius: 12px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    min-width: 180px;
+    box-shadow: 0 4px 15px rgba(36, 138, 82, 0.3);
+    letter-spacing: 0.5px;
+}
+
+.name-setup button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(36, 138, 82, 0.4);
+    background: linear-gradient(120deg, #2a9c5f, #2d87a1);
+}
+
+.name-setup button:active {
+    transform: translateY(-1px);
+}
+
+/* Resto do CSS permanece igual */
+.chat-area {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+/* Header do chat */
+.chat-header {
+    background: rgba(0, 0, 0, 0.2);
+    color: white;
+    padding: 12px 15px; /* Reduzi o padding */
+    text-align: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    flex-shrink: 0;
+    box-sizing: border-box;
+}
+
+.chat-header h1 {
+    margin: 0 0 8px 0; /* Reduzi a margem inferior */
+    font-size: 22px; /* Reduzi levemente */
+}
+
+.online-users {
+    margin-top: 8px;
+}
+
+.online-users h3 {
+    margin: 0 0 4px 0; /* Margens reduzidas */
+    font-size: 13px; /* Tamanho reduzido */
+}
+
+#online-list {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    padding: 0;
+    margin: 0;
+    gap: 4px; /* Uso gap em vez de margin */
+}
+
+#online-list li {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 4px 8px; /* Padding reduzido */
+    border-radius: 10px; /* Border-radius reduzido */
+    color: white;
+    font-size: 12px; /* Tamanho reduzido */
+    font-weight: 600;
+}
+
+/* Área de mensagens */
+.messages {
+    flex: 1;
+    padding: 12px; /* Padding reduzido */
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    background: rgba(0, 0, 0, 0.1);
+    min-height: 0;
+    scroll-behavior: smooth;
+    box-sizing: border-box;
+}
+
+.messages::-webkit-scrollbar {
+    width: 6px;  /* Barra fina */
+}
+
+.messages::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 3px;
+}
+
+.messages::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 3px;
+}
+
+.messages::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.5);
+}
+
+/* Mensagens individuais - ajuste de largura */
+.message {
+    max-width: 85%; /* Aumentei de 80% para 85% */
+    padding: 8px 12px 6px;
+    margin-bottom: 8px;
+    border-radius: 18px;
+    animation: fadeIn 0.3s ease-in;
+    word-wrap: break-word;
+    box-sizing: border-box;
+}
+
+.message.hidden {
+    opacity: 0;
+    max-height: 0;
+    margin-bottom: 0;
+    overflow: hidden;
+}
+
+.message-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 4px;
+    gap: 10px; /* ← ADICIONE ISSO para espaço entre nome e horário */
+}
+
+
+.message.self {
+    background: linear-gradient(120deg, #248A52, #257287);
+    color: white;
+    align-self: flex-end;
+    border-bottom-right-radius: 4px;
+}
+
+.message.other {
+    background: rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.9);
+    align-self: flex-start;
+    border-bottom-left-radius: 4px;
+}
+
+.message strong {
+    font-weight: 600;
+}
+
+.message-content {
+    margin-bottom: 2px;
+}
+
+.message .timestamp {
+    font-size: 0.6em;
+    color: rgba(255, 255, 255, 0.5);
+    margin-left: 8px;
+}
+
+.message.other .timestamp {
+    left: 12px;
+    right: auto;
+    margin-left: 2px; /* Espaço entre o nome e o horário */
+}
+
+.input-area {
+    display: flex;
+    padding: 10px 12px; /* Reduzi o padding */
+    background: rgba(0, 0, 0, 0.3);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    flex-shrink: 0;
+    align-items: center;
+    gap: 6px; /* Uso gap em vez de margin para controle mais fácil */
+    min-height: 60px; /* Altura mínima reduzida */
+    box-sizing: border-box; /* Importante: inclui padding na largura total */
+}
+
+#emoji-btn {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 18px; /* Reduzi de 20px */
+    cursor: pointer;
+    padding: 6px; /* Reduzi de 8px */
+    border-radius: 50%;
+    transition: background 0.2s;
+    flex-shrink: 0; /* Impede que os botões encolham */
+    width: 36px; /* Largura fixa */
+    height: 36px; /* Altura fixa */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#emoji-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+#emoji-picker {
+    position: absolute;
+    bottom: 100%;  /* Acima do input */
+    left: 0;
+    z-index: 100;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+/* Campo de input de texto */
+#msg-input {
+    flex: 1;
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    color: white;
+    font-size: 15px; /* Reduzi levemente */
+    padding: 10px 14px; /* Ajustei o padding */
+    border-radius: 20px; /* Reduzi de 24px */
+    outline: none;
+    min-height: 20px;
+    max-height: 60px; /* Limite reduzido */
+    overflow-y: auto;
+    box-sizing: border-box;
+}
+
+#msg-input::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+/* Botão enviar */
+#send-btn {
+    background: linear-gradient(120deg, #248A52, #257287);
+    color: white;
+    border: none;
+    padding: 10px 16px; /* Ajustei o padding */
+    border-radius: 20px; /* Reduzi de 24px */
+    cursor: pointer;
+    font-size: 14px; /* Reduzi levemente */
+    transition: transform 0.2s, box-shadow 0.2s;
+    white-space: nowrap;
+    flex-shrink: 0;
+    min-width: 60px; /* Largura mínima */
+}
+
+#send-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(36, 138, 82, 0.3);
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Modal de Emojis */
+.emoji-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    backdrop-filter: blur(5px);
+}
+
+.emoji-modal-content {
+    background: linear-gradient(135deg, #1e3c72, #2a5298);
+    border-radius: 20px;
+    width: 90%;
+    max-width: 400px;
+    max-height: 70vh;
+    overflow: hidden;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    animation: modalSlideIn 0.3s ease-out;
+}
+
+.emoji-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    color: white;
+    background: rgba(0, 0, 0, 0.2);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.emoji-header h3 {
+    margin: 0;
+    font-size: 18px;
+}
+
+#close-emoji-modal {
+    font-size: 24px;
+    cursor: pointer;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 50%;
+    transition: background 0.2s;
+}
+
+#close-emoji-modal:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.emoji-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(40px, 1fr));
+    gap: 8px;
+    padding: 20px;
+    max-height: 50vh;
+    overflow-y: auto;
+    scrollbar-width: thin;
+}
+
+.emoji-grid::-webkit-scrollbar {
+    width: 6px;
+}
+
+.emoji-grid::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.2);
+}
+
+.emoji-grid::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.emoji-btn {
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+    padding: 10px;
+    border-radius: 12px;
+    transition: all 0.2s;
+    width: 100%;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.emoji-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: scale(1.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* Barra de pesquisa de emojis */
+.emoji-search {
+    padding: 15px 20px;
+    background: rgba(0, 0, 0, 0.1);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+#emoji-search {
+    width: 100%;
+    padding: 12px 16px;
+    border: none;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    font-size: 16px;
+    outline: none;
+}
+
+#emoji-search::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+#emoji-search:focus {
+    background: rgba(255, 255, 255, 0.15);
+    box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.2);
+}
+
+/* Footer do modal de emojis */
+.emoji-footer {
+    padding: 10px 20px;
+    background: rgba(0, 0, 0, 0.2);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.7);
+    text-align: center;
+    font-size: 12px;
+}
+
+/* Mensagem quando não há resultados */
+.no-results {
+    grid-column: 1 / -1;
+    text-align: center;
+    color: rgba(255, 255, 255, 0.5);
+    padding: 20px;
+    font-style: italic;
+}
+
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9) translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+/* Responsivo */
+@media (max-width: 480px) {
+    body {
+        padding: 5px;
+    }
+    
+    .chat-container {
+        max-width: 100%;
+        height: 100vh;
+        border-radius: 0;
+    }
+    
+    .name-setup {
+        padding: 30px 20px;
+    }
+    
+    .name-setup h2 {
+        font-size: 24px;
+        margin-bottom: 25px;
+    }
+    
+    .name-setup input {
+        max-width: 100%;
+        padding: 14px 18px;
+    }
+    
+    .name-setup button {
+        padding: 14px 25px;
+        min-width: 160px;
+    }
+    
+    .messages {
+        padding: 10px;
+    }
+    
+    .emoji-modal-content {
+        width: 95%;
+        max-height: 80vh;
+    }
+}
+
+/* Botão de anexar imagem */
+#attach-btn {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 18px; /* Reduzi de 20px */
+    cursor: pointer;
+    padding: 6px; /* Reduzi de 8px */
+    border-radius: 50%;
+    transition: background 0.2s;
+    flex-shrink: 0; /* Impede que os botões encolham */
+    width: 36px; /* Largura fixa */
+    height: 36px; /* Altura fixa */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#attach-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+/* Modal de preview de imagem */
+.image-preview-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1001;
+    backdrop-filter: blur(5px);
+}
+
+.image-preview-content {
+    background: linear-gradient(135deg, #1e3c72, #2a5298);
+    border-radius: 20px;
+    width: 90%;
+    max-width: 500px;
+    max-height: 80vh;
+    overflow: hidden;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    animation: modalSlideIn 0.3s ease-out;
+}
+
+.image-preview-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    color: white;
+    background: rgba(0, 0, 0, 0.2);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.image-preview-header h3 {
+    margin: 0;
+    font-size: 18px;
+}
+
+#close-preview-modal {
+    font-size: 24px;
+    cursor: pointer;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 50%;
+    transition: background 0.2s;
+}
+
+#close-preview-modal:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.image-preview-body {
+    padding: 20px;
+    text-align: center;
+    max-height: 400px;
+    overflow: hidden;
+}
+
+#preview-image {
+    max-width: 100%;
+    max-height: 300px;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.image-preview-footer {
+    padding: 15px 20px;
+    background: rgba(0, 0, 0, 0.2);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.image-preview-footer button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    transition: all 0.2s;
+    flex: 1;
+}
+
+#cancel-preview {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+}
+
+#cancel-preview:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+#send-image {
+    background: linear-gradient(120deg, #248A52, #257287);
+    color: white;
+}
+
+#send-image:hover {
+    background: linear-gradient(120deg, #2a9c5f, #2d87a1);
+    transform: translateY(-2px);
+}
+
+/* Mensagens com imagem */
+.message-image {
+    max-width: 100%; /* Garante que a imagem não ultrapasse o container */
+    height: auto;
+    margin-top: 5px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.message-image:hover {
+    transform: scale(1.02);
+}
+
+.message-image-container {
+    position: relative;
+    display: inline-block;
+    max-width: 100%;
+    margin-bottom: 2px;
+}
+
+.message-image-caption {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.7);
+    margin-top: 5px;
+    font-style: italic;
+}
+
+/* Modal de imagem ampliada */
+.image-fullscreen-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.95);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1002;
+    cursor: pointer;
+}
+
+.image-fullscreen-content {
+    max-width: 90%;
+    max-height: 90%;
+    position: relative;
+}
+
+.image-fullscreen-content img {
+    max-width: 100%;
+    max-height: 90vh;
+    border-radius: 10px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+}
+
+/* Loading para upload de imagem */
+.image-loading {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top-color: #fff;
+    animation: spin 1s ease-in-out infinite;
+    margin-right: 10px;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Responsivo para imagens */
+@media (max-width: 480px) {
+    .message-image {
+        max-width: 250px;
+    }
+    
+    .image-preview-content {
+        width: 95%;
+        margin: 10px;
+    }
+    
+    .image-preview-body {
+        padding: 15px;
+    }
+    
+    #preview-image {
+        max-height: 250px;
+    }
+}
+
+/* Modal de gravação de áudio */
+.audio-record-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1001;
+    backdrop-filter: blur(5px);
+}
+
+.audio-record-content {
+    background: linear-gradient(135deg, #1e3c72, #2a5298);
+    border-radius: 20px;
+    width: 90%;
+    max-width: 400px;
+    max-height: 80vh;
+    overflow: hidden;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    animation: modalSlideIn 0.3s ease-out;
+}
+
+.audio-record-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    color: white;
+    background: rgba(0, 0, 0, 0.2);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.audio-record-header h3 {
+    margin: 0;
+    font-size: 18px;
+}
+
+#close-audio-modal {
+    font-size: 24px;
+    cursor: pointer;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 50%;
+    transition: background 0.2s;
+}
+
+#close-audio-modal:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.audio-record-body {
+    padding: 20px;
+    text-align: center;
+}
+
+#audio-record-visualizer {
+    width: 100%;
+    height: 100px;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 14px;
+}
+
+#audio-record-timer {
+    font-size: 24px;
+    color: white;
+    margin-bottom: 15px;
+    font-weight: bold;
+}
+
+.audio-record-controls {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.audio-record-controls button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    transition: all 0.2s;
+}
+
+#start-record-btn {
+    background: linear-gradient(120deg, #248A52, #257287);
+    color: white;
+}
+
+#start-record-btn:hover:not(:disabled) {
+    background: linear-gradient(120deg, #2a9c5f, #2d87a1);
+}
+
+#stop-record-btn {
+    background: linear-gradient(120deg, #c9302c, #d9534f);
+    color: white;
+}
+
+#stop-record-btn:hover:not(:disabled) {
+    background: linear-gradient(120deg, #d9534f, #c9302c);
+}
+
+.audio-record-controls button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+#audio-preview {
+    margin-top: 15px;
+}
+
+#audio-preview audio {
+    width: 100%;
+    border-radius: 10px;
+}
+
+.audio-record-footer {
+    padding: 15px 20px;
+    background: rgba(0, 0, 0, 0.2);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.audio-record-footer button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    transition: all 0.2s;
+    flex: 1;
+}
+
+#cancel-audio {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+}
+
+#cancel-audio:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+#send-audio {
+    background: linear-gradient(120deg, #248A52, #257287);
+    color: white;
+}
+
+#send-audio:hover:not(:disabled) {
+    background: linear-gradient(120deg, #2a9c5f, #2d87a1);
+}
+
+#send-audio:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Botão de gravar áudio na área de input */
+#record-btn {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 18px; /* Reduzi de 20px */
+    cursor: pointer;
+    padding: 6px; /* Reduzi de 8px */
+    border-radius: 50%;
+    transition: background 0.2s;
+    flex-shrink: 0; /* Impede que os botões encolham */
+    width: 36px; /* Largura fixa */
+    height: 36px; /* Altura fixa */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+#record-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+/* Mensagens de áudio */
+.message-audio {
+    margin-top: 5px;
+}
+
+.message-audio audio {
+    max-width: 100%;
+    border-radius: 20px;
+    outline: none;
+}
+
+.message-audio-caption {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.7);
+    margin-top: 5px;
+    font-style: italic;
+}
+
+/* Animação para gravação */
+.recording-animation {
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.5; }
+    100% { opacity: 1; }
+}
