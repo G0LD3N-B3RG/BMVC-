@@ -5,30 +5,217 @@
     padding: 0;
 }
 
+html, body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden; 
+}
+
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background: #111b21;
     color: #e9edef;
+    margin: 0;
+    padding: 0;
+    width: 100vw;
     height: 100vh;
     overflow: hidden;
 }
 
 .home-container {
     display: flex;
+    width: 100vw;
     height: 100vh;
     background: #111b21;
+    position: fixed;
+    top: 0;
+    left: 0;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
 }
 
 /* Sidebar de conversas */
 .conversations-sidebar {
-    width: 400px;
+    width: 30%;
+    min-width: 300px;
+    max-width: 400px;
+    height: 100vh;
     background: #202c33;
     border-right: 1px solid #2a3942;
     display: flex;
     flex-direction: column;
-    position: relative;
+    overflow: hidden;
 }
 
+/*ÁREA DO CHAT - 70% DA TELA */
+.chat-integrated-area {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background: #222e35;
+    position: relative;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.welcome-chat-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    text-align: center;
+    color: #8696a0;
+    padding: 40px;
+}
+
+.welcome-chat-state .welcome-icon {
+    font-size: 80px;
+    margin-bottom: 24px;
+    opacity: 0.7;
+}
+
+/* BOAS-VINDAS - TELA CHEIA */
+.welcome-chat-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    text-align: center;
+    color: #8696a0;
+    padding: 40px;
+    width: 100%;
+}
+
+.welcome-chat-state p {
+    font-size: 16px;
+    color: #8696a0;
+}
+
+/* CHAT ATIVO - TELA CHEIA */
+.active-chat {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    width: 100%;
+}
+
+/* Header do chat integrado */
+.chat-integrated-area .chat-header {
+    background: #202c33;
+    padding: 12px 16px;
+    border-bottom: 1px solid #2a3942;
+    flex-shrink: 0;
+    margin: 0;
+    border-radius: 0;
+}
+
+.chat-integrated-area .chat-header-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.chat-integrated-area .back-btn {
+    background: none;
+    border: none;
+    color: #aebac1;
+    font-size: 20px;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 50%;
+    transition: background 0.2s;
+}
+
+.chat-integrated-area .back-btn:hover {
+    background: #2a3942;
+}
+
+.chat-integrated-area .chat-title-container {
+    flex: 1;
+}
+
+.chat-integrated-area #chat-title {
+    margin: 0;
+    font-size: 16px;
+    color: #e9edef;
+}
+
+.chat-integrated-area .chat-info {
+    font-size: 13px;
+    color: #8696a0;
+    margin: 0;
+}
+
+/* Área de mensagens integrada */
+.chat-integrated-area .messages {
+    flex: 1;
+    padding: 15px;
+    overflow-y: auto;
+    background: #0b141a;
+    min-height: 0;
+    margin: 0;
+    border-radius: 0;
+}
+
+/* ÁREA DE INPUT */
+.chat-integrated-area .input-area {
+    background: #202c33;
+    padding: 12px 16px;
+    border-top: 1px solid #2a3942;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+    margin: 0;
+    border-radius: 0;
+}
+
+.chat-integrated-area #msg-input {
+    flex: 1;
+    background: #2a3942;
+    border: none;
+    border-radius: 8px;
+    padding: 9px 12px;
+    color: #e9edef;
+    font-size: 15px;
+    outline: none;
+}
+
+.chat-integrated-area #msg-input::placeholder {
+    color: #8696a0;
+}
+
+.chat-integrated-area #send-btn {
+    background: #00a884;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 9px 16px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+/* Responsivo */
+@media (max-width: 768px) {
+    .conversations-sidebar {
+        width: 100%;
+        max-width: none;
+    }
+    
+    .home-container.sidebar-hidden .conversations-sidebar {
+        display: none;
+    }
+    
+    .home-container.sidebar-hidden .chat-integrated-area {
+        width: 100%;
+    }
+}
+
+/* HEADER DA SIDEBAR */
 .sidebar-header {
     padding: 16px;
     background: #202c33;
@@ -36,6 +223,7 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    flex-shrink: 0;
 }
 
 .user-profile {
@@ -81,6 +269,26 @@ body {
     background: #2a3942;
 }
 
+/* Botão de Logout */
+#logout-btn {
+    background: none;
+    border: none;
+    color: #aebac1;
+    font-size: 20px;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 50%;
+    transition: background 0.2s;
+    pointer-events: auto !important;
+    position: relative !important;
+    z-index: 1000 !important;
+}
+
+#logout-btn:hover {
+    background: #2a3942;
+    color: #fff;
+}
+
 /* Barra de pesquisa */
 .search-bar {
     padding: 12px 16px;
@@ -119,6 +327,7 @@ body {
     flex: 1;
     overflow-y: auto;
     background: #111b21;
+    height: 100%;
 }
 
 .conversation-item {
@@ -286,9 +495,9 @@ body {
     position: fixed;
     top: 0;
     left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(11, 20, 26, 0.8);
+    width: 100vw;
+    height: 100vh;
+    background: rgba(11, 20, 26, 0.9);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -481,26 +690,490 @@ body {
 
 /* Scrollbar personalizada */
 .conversations-list::-webkit-scrollbar,
-.members-list::-webkit-scrollbar,
-.users-list::-webkit-scrollbar {
+.friends-list::-webkit-scrollbar,
+.chat-integrated-area .messages::-webkit-scrollbar {
     width: 6px;
 }
 
 .conversations-list::-webkit-scrollbar-track,
-.members-list::-webkit-scrollbar-track,
-.users-list::-webkit-scrollbar-track {
+.friends-list::-webkit-scrollbar-track,
+.chat-integrated-area .messages::-webkit-scrollbar-track {
     background: #2a3942;
 }
 
 .conversations-list::-webkit-scrollbar-thumb,
-.members-list::-webkit-scrollbar-thumb,
-.users-list::-webkit-scrollbar-thumb {
+.friends-list::-webkit-scrollbar-thumb,
+.chat-integrated-area .messages::-webkit-scrollbar-thumb {
     background: #8696a0;
     border-radius: 3px;
 }
 
-.conversations-list::-webkit-scrollbar-thumb:hover,
-.members-list::-webkit-scrollbar-thumb:hover,
-.users-list::-webkit-scrollbar-thumb:hover {
-    background: #aebac1;
+/* Guias de Navegação */
+.navigation-tabs {
+    display: flex;
+    background: #202c33;
+    border-bottom: 1px solid #2a3942;
+}
+
+.tab-button {
+    flex: 1;
+    padding: 15px;
+    background: none;
+    border: none;
+    color: #aebac1;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.tab-button:hover {
+    background: #2a3942;
+    color: #e9edef;
+}
+
+.tab-button.active {
+    color: #00a884;
+    border-bottom: 2px solid #00a884;
+    background: #2a3942;
+}
+
+/* Conteúdo das Guias */
+.tab-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+}
+
+
+.tab-pane {
+    flex: 1;
+    display: none;
+    flex-direction: column;
+}
+
+.tab-pane.active {
+    display: flex;
+}
+
+/* Lista de Amigos */
+.friends-list {
+    flex: 1;
+    overflow-y: auto;
+    background: #111b21;
+    height: 100%;
+}
+
+.friend-item {
+    display: flex;
+    align-items: center;
+    padding: 12px 16px;
+    cursor: pointer;
+    transition: background 0.2s;
+    border-bottom: 1px solid #222d34;
+}
+
+.friend-item:hover {
+    background: #2a3942;
+}
+
+.friend-avatar {
+    width: 49px;
+    height: 49px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #7856e0, #248A52);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    font-weight: bold;
+    color: white;
+    margin-right: 15px;
+}
+
+.friend-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.friend-name {
+    font-weight: 600;
+    font-size: 16px;
+    margin-bottom: 4px;
+    color: #e9edef;
+}
+
+.friend-status {
+    font-size: 13px;
+    color: #8696a0;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #8696a0;
+}
+
+.status-dot.online {
+    background: #00a884;
+}
+
+.friend-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.friend-action-btn {
+    background: none;
+    border: none;
+    color: #aebac1;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 50%;
+    transition: background 0.2s;
+    font-size: 16px;
+}
+
+.friend-action-btn:hover {
+    background: #2a3942;
+    color: #e9edef;
+}
+
+/* Estado Vazio */
+.empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 60px 30px;
+    color: #8696a0;
+    height: 100%;
+    min-height: 300px;
+}
+
+.empty-icon {
+    font-size: 80px;
+    margin-bottom: 20px;
+    opacity: 0.7;
+}
+
+.empty-state h3 {
+    color: #e9edef;
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.empty-state p {
+    font-size: 14px;
+    margin-bottom: 25px;
+    line-height: 1.5;
+    max-width: 300px;
+}
+
+.empty-state .welcome-btn {
+    background: #00a884;
+    color: white;
+    border: none;
+    border-radius: 24px;
+    padding: 12px 24px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s;
+    font-size: 14px;
+}
+
+.empty-state .welcome-btn:hover {
+    background: #008f70;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 168, 132, 0.3);
+}
+
+/* Botão de Ação Flutuante Universal */
+.floating-action-button {
+    position: absolute;
+    bottom: 24px;
+    right: 24px;
+    background: #00a884;
+    color: white;
+    border: none;
+    border-radius: 50px;
+    padding: 12px 20px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 4px 12px rgba(0, 168, 132, 0.3);
+    z-index: 100;
+}
+
+.floating-action-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0, 168, 132, 0.4);
+}
+
+/* Modal de Adicionar Amigo */
+.form-hint {
+    font-size: 12px;
+    color: #8696a0;
+    margin-top: 5px;
+}
+
+.search-results {
+    margin-top: 15px;
+    max-height: 200px;
+    overflow-y: auto;
+    border: 1px solid #3a4952;
+    border-radius: 4px;
+    background: #2a3942;
+}
+
+.search-result-item {
+    display: flex;
+    align-items: center;
+    padding: 12px;
+    border-bottom: 1px solid #3a4952;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.search-result-item:hover {
+    background: #3a4952;
+}
+
+.search-result-item:last-child {
+    border-bottom: none;
+}
+
+.search-result-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: #248A52;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    color: white;
+    margin-right: 12px;
+}
+
+.search-result-info {
+    flex: 1;
+}
+
+.search-result-name {
+    color: #e9edef;
+    font-weight: 600;
+}
+
+.search-result-status {
+    font-size: 12px;
+    color: #8696a0;
+}
+
+/* SISTEMA DE AMIGOS - ESTILOS COMPLETOS */
+
+/* Lista de Pedidos de Amizade */
+.requests-list {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.friend-request-item {
+    display: flex;
+    align-items: center;
+    padding: 15px;
+    border-bottom: 1px solid #3a4952;
+    background: #2a3942;
+    border-radius: 8px;
+    margin-bottom: 10px;
+}
+
+.friend-request-info {
+    flex: 1;
+}
+
+.friend-request-name {
+    color: #e9edef;
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+.friend-request-time {
+    font-size: 12px;
+    color: #8696a0;
+}
+
+.friend-request-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.request-action-btn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background 0.2s;
+}
+
+.request-action-btn.accept {
+    background: #00a884;
+    color: white;
+}
+
+.request-action-btn.accept:hover {
+    background: #008f70;
+}
+
+.request-action-btn.reject {
+    background: #2a3942;
+    color: #e9edef;
+    border: 1px solid #3a4952;
+}
+
+.request-action-btn.reject:hover {
+    background: #3a4952;
+}
+
+/* Indicador de Pedidos Pendentes */
+.tab-button.has-requests::after {
+    content: '';
+    width: 6px;
+    height: 6px;
+    background: #ff4444;
+    border-radius: 50%;
+    margin-left: 5px;
+}
+
+/*  ESTILOS ADICIONAIS (complementares) */
+
+/* Avatar para pedidos de amizade */
+.friend-request-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #7856e0, #248A52);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    color: white;
+    margin-right: 12px;
+}
+
+/* Estado vazio para pedidos */
+.empty-requests {
+    text-align: center;
+    padding: 40px 20px;
+    color: #8696a0;
+}
+
+.empty-requests .empty-icon {
+    font-size: 50px;
+    margin-bottom: 15px;
+    opacity: 0.5;
+}
+
+/* Cabeçalho da guia de amigos */
+.friends-header {
+    padding: 15px;
+    border-bottom: 1px solid #2a3942;
+    background: #202c33;
+}
+
+.view-requests-btn {
+    background: #00a884;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    padding: 10px 15px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    transition: background 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.view-requests-btn:hover {
+    background: #008f70;
+}
+
+/* Modal de pedidos de amizade */
+#friend-requests-modal .modal-content {
+    max-width: 500px;
+}
+
+/* Estilos para o modal de exclusão de conta */
+#delete-account-btn {
+    color: #dc3545 !important;
+    transition: all 0.3s ease;
+}
+
+#delete-account-btn:hover {
+    background: #dc3545 !important;
+    color: white !important;
+    transform: scale(1.1);
+}
+
+#confirm-delete-account:disabled {
+    background: #6c757d !important;
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+#confirm-delete-account:not(:disabled):hover {
+    background: #c82333 !important;
+    transform: translateY(-2px);
+}
+
+/* Menu de Contexto para Conversas */
+.context-menu {
+    animation: fadeIn 0.2s ease-in;
+}
+
+.context-menu-item:hover {
+    background: #3a4952 !important;
+}
+
+.context-menu-item[data-action="delete"]:hover {
+    background: #dc3545 !important;
+    color: white !important;
+}
+
+/* Indicador visual para grupos que podem ser excluídos */
+.conversation-item[data-conversa-type="group"]:not([data-chat-id="general"]):hover {
+    background: #2a3942;
+    cursor: context-menu;
+}
+
+/* Feedback visual durante a exclusão */
+.conversation-item.deleting {
+    opacity: 0.5;
+    background: rgba(220, 53, 69, 0.1) !important;
+    transition: all 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
 }

@@ -1,4 +1,4 @@
-<!-- app/views/html/chat.tpl -->
+<!-- app/views/html/chat.tpl (MODIFICADO - SEM LOGIN) -->
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -6,20 +6,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chat Online</title>
     <link rel="stylesheet" href="/static/css/chat.css">
-    <!-- CDN para emoji-picker -->
-    <script src="https://cdn.jsdelivr.net/npm/emoji-picker-element@^1.0.0"></script>
 </head>
 <body>
     <div class="chat-container">
-        <div id="name-setup" class="name-setup">
-            <h2>Escolha um nome de usuário:</h2>
-            <input type="text" id="name-input" placeholder="Seu nome..." required>
-            <button id="set-name-btn">Entrar no Chat</button>
-        </div>
-        
         <div id="chat-area" class="chat-area" style="display: none;">
+            <!-- Header do chat -->
             <div class="chat-header">
-                <h1>Chat Online</h1>
+                <div class="chat-header-info">
+                    <button id="back-to-home" class="back-btn">←</button>
+                    <div class="chat-title-container">
+                        <h1 id="chat-title">Chat Online</h1>
+                        <div id="chat-info" class="chat-info"></div>
+                    </div>
+                </div>
                 <div class="online-users">
                     <h3>Usuários online:</h3>
                     <ul id="online-list"></ul>

@@ -1,18 +1,27 @@
-// static/js/chat.js (corrigido)
+// static/js/chat.js 
 let lastSince = '';
 let username = '';
 let pendingMessageId = null;
 let seenMessageIds = new Set();
 
-// Elementos DOM
-const nameSetup = document.getElementById('name-setup');
+// VARIÁVEIS PARA MULTIPLOS CHATS
+let currentChat = {
+    id: 'general',
+    type: 'group',
+    name: 'Chat Geral',
+    participants: []
+};
+
+let chatHistory = {
+    'general': { messages: [], lastSince: '' }
+};
+
+// Elementos DOM 
 const chatArea = document.getElementById('chat-area');
 const messagesDiv = document.getElementById('messages');
 const onlineUl = document.getElementById('online-list');
 const input = document.getElementById('msg-input');
 const sendBtn = document.getElementById('send-btn');
-const nameInput = document.getElementById('name-input');
-const setNameBtn = document.getElementById('set-name-btn');
 const emojiBtn = document.getElementById('emoji-btn');
 const emojiModal = document.getElementById('emoji-modal');
 const closeEmojiModal = document.getElementById('close-emoji-modal');
@@ -38,6 +47,10 @@ const sendAudioBtn = document.getElementById('send-audio');
 const audioPreview = document.getElementById('audio-preview');
 const audioRecordTimer = document.getElementById('audio-record-timer');
 const audioRecordVisualizer = document.getElementById('audio-record-visualizer');
+// ELEMENTOS DOM PARA INFO DO CHAT
+const chatTitle = document.getElementById('chat-title');
+const chatInfo = document.getElementById('chat-info');
+const backToHomeBtn = document.getElementById('back-to-home');
 
 // Variáveis para controle de imagem
 let selectedImageFile = null;
@@ -50,14 +63,131 @@ let audioBlob = null;
 let recordingInterval;
 let recordingTime = 0;
 
+let pollInterval = null;
+
 console.log('JS carregado! Elementos encontrados:', {
-    nameSetup: !!nameSetup,
     chatArea: !!chatArea,
-    nameInput: !!nameInput,
-    setNameBtn: !!setNameBtn
+    messagesDiv: !!messagesDiv,
+    input: !!input,
+    sendBtn: !!sendBtn
 });
 
-// Lista de emojis com nomes para busca
+// FUNÇÃO PARA INICIALIZAR O CHAT COM SESSÃO
+async function initializeChat() {
+    try {
+        console.log('🔐 Buscando informações do usuário...');
+        
+        const response = await fetch('/user-info');
+        const data = await response.json();
+        
+        if (data.error) {
+            console.error('❌ Usuário não autenticado:', data.error);
+            window.location.href = '/portal';
+            return;
+        }
+        
+        username = data.username;
+        console.log('✅ Usuário da sessão:', username);
+        
+        // Obter parâmetros da URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const chatId = urlParams.get('chat') || 'general';
+        const chatType = urlParams.get('type') || 'group';
+        const chatName = urlParams.get('name') || 'Chat Geral';
+        
+        currentChat = {
+            id: chatId,
+            type: chatType,
+            name: chatName,
+            participants: []
+        };
+        
+        // Inicializar histórico se não existir
+        if (!chatHistory[chatId]) {
+            chatHistory[chatId] = { messages: [], lastSince: '' };
+        }
+        
+        // Mostrar chat area
+        if (chatArea) {
+            chatArea.style.display = 'flex';
+        }
+        
+        // Atualizar interface
+        updateChatHeader();
+        
+        // Carregar mensagens do chat atual
+        loadChatMessages();
+        
+        // Iniciar polling
+        startPolling();
+        
+        console.log('🎉 Chat inicializado:', currentChat);
+        
+    } catch (error) {
+        console.error('💥 Erro ao inicializar chat:', error);
+        window.location.href = '/portal';
+    }
+}
+
+function startPolling() {
+    stopPolling();
+    pollInterval = setInterval(poll, 1000);
+    console.log('🔄 Polling iniciado');
+}
+
+function stopPolling() {
+    if (pollInterval) {
+        clearInterval(pollInterval);
+        pollInterval = null;
+        console.log('🛑 Polling parado');
+    }
+}
+
+function updateChatHeader() {
+    console.log('Atualizando header do chat:', currentChat);
+    
+    // ATUALIZAR TÍTULO
+    if (chatTitle) {
+        chatTitle.textContent = currentChat.name;
+    }
+    
+    // ATUALIZAR INFORMAÇÕES
+    if (chatInfo) {
+        if (currentChat.type === 'group') {
+            chatInfo.textContent = `Grupo • ${currentChat.participants.length} participantes`;
+        } else if (currentChat.type === 'private') {
+            chatInfo.textContent = 'Chat privado';
+        } else {
+            chatInfo.textContent = 'Chat público';
+        }
+    }
+    
+    console.log('Header atualizado:', {
+        title: chatTitle?.textContent,
+        info: chatInfo?.textContent
+    });
+}
+
+function loadChatMessages() {
+    if (!messagesDiv) return;
+    
+    // Limpar mensagens atuais
+    messagesDiv.innerHTML = '';
+    
+    // Carregar mensagens do histórico local
+    const chatData = chatHistory[currentChat.id];
+    if (chatData && chatData.messages.length > 0) {
+        chatData.messages.forEach(msg => {
+            appendMessage(msg);
+        });
+        scrollToBottom();
+    }
+    
+    // Iniciar polling para este chat específico
+    lastSince = chatData?.lastSince || '';
+}
+
+// Lista de emojis com nomes para busca (mantida igual)
 const emojisWithNames = [
     // Smileys & Emotion
     { emoji: '😀', name: 'sorriso' },
@@ -349,7 +479,6 @@ function sendImage() {
             isTemp: true
         };
         
-        // ↓↓↓ ADICIONE O ID TEMPORÁRIO AO seenMessageIds PARA EVITAR DUPLICAÇÃO ↓↓↓
         seenMessageIds.add(tempMsgId);
         appendMessage(tempMsg, true);
         
@@ -358,10 +487,11 @@ function sendImage() {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({
-                name: username,
                 content: 'Imagem',
                 type: 'imagem',
-                image_data: imageData
+                image_data: imageData,
+                chat_id: currentChat.id,
+                chat_type: currentChat.type
             })
         })
         .then(res => res.json())
@@ -369,7 +499,6 @@ function sendImage() {
             if (data.error) {
                 throw new Error(data.error);
             }
-            // ↓↓↓ ADICIONE O ID REAL AO seenMessageIds E ATUALIZE O pendingMessageId ↓↓↓
             seenMessageIds.add(data.id);
             pendingMessageId = data.id;
             
@@ -380,7 +509,6 @@ function sendImage() {
             console.error('Erro ao enviar imagem:', err);
             // Mostrar erro na mensagem temporária
             updateTempMessageWithError(tempMsgId, err.message);
-            // ↓↓↓ REMOVA O ID TEMPORÁRIO EM CASO DE ERRO ↓↓↓
             seenMessageIds.delete(tempMsgId);
         });
         
@@ -389,30 +517,32 @@ function sendImage() {
     reader.readAsDataURL(selectedImageFile);
 }
 
-// Função para atualizar mensagem temporária com sucesso
+// atualizar mensagem temporária com sucesso
 function updateTempMessage(tempId, serverMsg) {
     const messageDiv = messagesDiv.querySelector(`[data-temp-id="${tempId}"]`);
     if (messageDiv) {
         const contentDiv = messageDiv.querySelector('.message-content');
         
-        if (serverMsg.type === 'imagem' && serverMsg.image_data) {
+        if (serverMsg.type === 'imagem' && serverMsg.image_filename) {
             // Mensagem de imagem
+            const imageUrl = `/uploads/images/${serverMsg.image_filename}`;
             contentDiv.innerHTML = `
                 <div class="message-image-container">
-                    <img src="${serverMsg.image_data}" alt="Imagem enviada" class="message-image" onclick="openImageFullscreen('${serverMsg.image_data}')">
+                    <img src="${imageUrl}" alt="Imagem enviada" class="message-image" onclick="openImageFullscreen('${imageUrl}')">
                     <div class="message-image-caption">Imagem enviada</div>
                 </div>
             `;
-        } else if (serverMsg.type === 'audio' && serverMsg.audio_data) {
+        } else if (serverMsg.type === 'audio' && serverMsg.audio_filename) {
             // Mensagem de áudio
+            const audioUrl = `/uploads/audios/${serverMsg.audio_filename}`;
             contentDiv.innerHTML = `
                 <div class="message-audio">
-                    <audio controls src="${serverMsg.audio_data}"></audio>
+                    <audio controls src="${audioUrl}"></audio>
                     <div class="message-audio-caption">Áudio ${serverMsg.audio_duration ? `- ${serverMsg.audio_duration}s` : ''}</div>
                 </div>
             `;
         } else {
-            // Mensagem de texto normal - apenas atualizar o conteúdo se necessário
+            // Mensagem de texto normal
             contentDiv.textContent = serverMsg.conteudo;
         }
         
@@ -424,7 +554,7 @@ function updateTempMessage(tempId, serverMsg) {
     }
 }
 
-// Função para mostrar erro no upload
+// mostrar erro no upload
 function updateTempMessageWithError(tempId, error) {
     const messageDiv = messagesDiv.querySelector(`[data-temp-id="${tempId}"]`);
     if (messageDiv) {
@@ -437,7 +567,7 @@ function updateTempMessageWithError(tempId, error) {
     }
 }
 
-// Função para abrir imagem em tela cheia
+// abrir imagem em tela cheia
 function openImageFullscreen(imageSrc) {
     // Criar modal de tela cheia se não existir
     if (!imageFullscreenModal) {
@@ -462,7 +592,6 @@ function openImageFullscreen(imageSrc) {
     imageFullscreenModal.style.display = 'flex';
 }
 
-// Adicionar função openImageFullscreen ao escopo global
 window.openImageFullscreen = openImageFullscreen;
 
 // Funções para áudio
@@ -592,11 +721,12 @@ function sendAudio() {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({
-                name: username,
                 content: 'Áudio',
                 type: 'audio',
                 audio_data: audioData,
-                audio_duration: recordingTime
+                audio_duration: recordingTime,
+                chat_id: currentChat.id,
+                chat_type: currentChat.type
             })
         })
         .then(res => res.json())
@@ -621,15 +751,53 @@ function sendAudio() {
     reader.readAsDataURL(audioBlob);
 }
 
+// Função para marcar mensagem como falha
+function markMessageAsFailed(tempId) {
+    const messageDiv = messagesDiv.querySelector(`[data-temp-id="${tempId}"]`);
+    if (messageDiv) {
+        const contentDiv = messageDiv.querySelector('.message-content');
+        if (contentDiv) {
+            contentDiv.innerHTML = '<span style="color: #ff6b6b;">❌ Falha ao enviar mensagem</span>';
+        }
+        messageDiv.removeAttribute('data-temp-id');
+        messageDiv.classList.remove('temp');
+    }
+}
+
+//EVENT LISTENER PARA VOLTAR À HOME
+if (backToHomeBtn) {
+    backToHomeBtn.addEventListener('click', () => {
+        window.location.href = '/home';
+    });
+}
+
 // Funções auxiliares
-function formatTime(iso) {
-    const date = new Date(iso);
-    // Formata para HH:MM (apenas horas e minutos)
-    return date.toTimeString().substring(0, 5);
+function formatTime(isoString) {
+    if (!isoString) return '';
+    
+    const date = new Date(isoString);
+    const now = new Date();
+    const diffMs = now - date;
+    const diffMins = Math.floor(diffMs / 60000);
+    const diffHours = Math.floor(diffMins / 60);
+    const diffDays = Math.floor(diffHours / 24);
+
+    if (diffMins < 1) {
+        return 'Agora';
+    } else if (diffMins < 60) {
+        return `${diffMins} min`;
+    } else if (diffHours < 24) {
+        return `${diffHours} h`;
+    } else if (diffDays < 7) {
+        return `${diffDays} d`;
+    } else {
+        return date.toLocaleDateString('pt-BR');
+    }
 }
 
 function appendMessage(msg, isSelf = false) {
-    // Verificação extra: NÃO ADICIONAR SE JÁ EXISTIR
+    if (!messagesDiv) return;
+    
     const existingMessage = messagesDiv.querySelector(`[data-message-id="${msg.id}"]`) || 
                            messagesDiv.querySelector(`[data-temp-id="${msg.id}"]`);
     if (existingMessage) {
@@ -653,21 +821,22 @@ function appendMessage(msg, isSelf = false) {
         div.dataset.messageId = msg.id;
     }
 
-    let headerHTML = '';
     let contentHTML = '';
 
     // Verificar pelo campo 'type'
-    if (msg.type === 'imagem' && msg.image_data) {
+    if (msg.type === 'imagem' && msg.image_filename) {
+        const imageUrl = `/uploads/images/${msg.image_filename}`;
         contentHTML = `
             <div class="message-image-container">
-                <img src="${msg.image_data}" alt="Imagem enviada" class="message-image" onclick="openImageFullscreen('${msg.image_data}')">
+                <img src="${imageUrl}" alt="Imagem enviada" class="message-image" onclick="openImageFullscreen('${imageUrl}')">
                 <div class="message-image-caption">Imagem enviada</div>
             </div>
         `;
-    } else if (msg.type === 'audio' && msg.audio_data) {
+    } else if (msg.type === 'audio' && msg.audio_filename) {
+        const audioUrl = `/uploads/audios/${msg.audio_filename}`;
         contentHTML = `
             <div class="message-audio">
-                <audio controls src="${msg.audio_data}"></audio>
+                <audio controls src="${audioUrl}"></audio>
                 <div class="message-audio-caption">Áudio ${msg.audio_duration ? `- ${msg.audio_duration}s` : ''}</div>
             </div>
         `;
@@ -701,10 +870,8 @@ function appendMessage(msg, isSelf = false) {
         `;
     }
     
-    if (messagesDiv) {
-        messagesDiv.appendChild(div);
-        scrollToBottom();
-    }
+    messagesDiv.appendChild(div);
+    scrollToBottom();
 }
 
 function updateOnline(list) {
@@ -727,30 +894,36 @@ function scrollToBottom() {
 
 // Poll
 function poll() {
-    if (!username) return;
+    if (!username || !currentChat) return;
     
-    let url = '/messages';
-    if (lastSince) url += `?since=${encodeURIComponent(lastSince)}`;
-    if (username) url += `${lastSince ? '&' : '?'}name=${encodeURIComponent(username)}`;
+    let url = `/messages?chat=${encodeURIComponent(currentChat.id)}&type=${encodeURIComponent(currentChat.type)}`;
+    if (lastSince) url += `&since=${encodeURIComponent(lastSince)}`;
     
     fetch(url)
         .then(res => res.json())
         .then(data => {
             let newMsgs = 0;
             data.messages.forEach(msg => {
-                // ↓↓↓ VERIFICAÇÃO MAIS ROBUSTA PARA EVITAR DUPLICAÇÕES ↓↓↓
-                if (seenMessageIds.has(msg.id) || 
-                    (pendingMessageId && msg.id === pendingMessageId) ||
-                    (msg.nome === username && Date.now() - new Date(msg.timestamp).getTime() < 2000)) {
+                // VERIFICAR SE A MENSAGEM É DO CHAT ATUAL
+                if (msg.chat_id !== currentChat.id) return;
+                
+                if (seenMessageIds.has(msg.id) || (pendingMessageId && msg.id === pendingMessageId)) {
                     return;
                 }
                 appendMessage(msg);
                 seenMessageIds.add(msg.id);
                 newMsgs++;
+                
+                // SALVAR NO HISTÓRICO LOCAL
+                if (!chatHistory[currentChat.id].messages.some(m => m.id === msg.id)) {
+                    chatHistory[currentChat.id].messages.push(msg);
+                }
             });
+            
             updateOnline(data.online);
             if (newMsgs > 0) {
                 lastSince = data.messages[data.messages.length - 1].timestamp;
+                chatHistory[currentChat.id].lastSince = lastSince;
             }
         })
         .catch(err => console.error('Erro no poll:', err));
@@ -759,80 +932,80 @@ function poll() {
 // Send
 function send() {
     let content = input.value.trim();
-    if (!content || !username) return;
+    if (!content || !username || !currentChat) return;
     input.value = '';
 
     const approxIso = new Date().toISOString();
-    const tempMsgId = 'txt-' + Date.now(); // ID temporário para texto também
+    const tempMsgId = 'txt-' + Date.now();
     const tempMsg = {
         id: tempMsgId, 
         nome: username, 
         conteudo: content, 
         timestamp: approxIso,
-        isTemp: true
+        isTemp: true,
+        chat_id: currentChat.id,
+        chat_type: currentChat.type
     };
     
-    // ↓↓↓ ADICIONE O ID TEMPORÁRIO AO seenMessageIds ↓↓↓
     seenMessageIds.add(tempMsgId);
     appendMessage(tempMsg, true);
+
+    // Mostrar loading no botão
+    if (sendBtn) {
+        sendBtn.classList.add('sending');
+        sendBtn.disabled = true;
+    }
 
     fetch('/send', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({name: username, content})
+        body: JSON.stringify({
+            content: content,
+            chat_id: currentChat.id,
+            chat_type: currentChat.type
+        })
     })
     .then(res => res.json())
     .then(data => {
+        // Remover loading do botão
+        if (sendBtn) {
+            sendBtn.classList.remove('sending');
+            sendBtn.disabled = false;
+        }
+
         if (data.id && data.timestamp) {
-            // ↓↓↓ ADICIONE O ID REAL AO seenMessageIds ↓↓↓
-            seenMessageIds.add(data.id);
-            pendingMessageId = data.id;
             lastSince = data.timestamp;
+            pendingMessageId = data.id;
+            seenMessageIds.add(data.id);
             console.log('Mensagem confirmada por ID:', data.id);
             
-            // Atualizar a mensagem temporária
+            // Atualizar mensagem temporária com dados reais
             updateTempMessage(tempMsgId, data);
+            
+            if (!chatHistory[currentChat.id].messages.some(m => m.id === data.id)) {
+                chatHistory[currentChat.id].messages.push(data);
+            }
         } else if (data.error) {
             console.error('Erro ao enviar:', data.error);
-            if (messagesDiv.lastChild) messagesDiv.removeChild(messagesDiv.lastChild);
+            // Marcar mensagem como falha
+            markMessageAsFailed(tempMsgId);
             pendingMessageId = null;
-            // ↓↓↓ REMOVA O ID TEMPORÁRIO EM CASO DE ERRO ↓↓↓
             seenMessageIds.delete(tempMsgId);
         }
     })
     .catch(err => {
         console.error('Erro ao enviar:', err);
-        if (messagesDiv.lastChild) messagesDiv.removeChild(messagesDiv.lastChild);
+        // Remover loading do botão mesmo em erro
+        if (sendBtn) {
+            sendBtn.classList.remove('sending');
+            sendBtn.disabled = false;
+        }
+        
+        // Marcar mensagem como falha
+        markMessageAsFailed(tempMsgId);
         pendingMessageId = null;
-        // ↓↓↓ REMOVA O ID TEMPORÁRIO EM CASO DE ERRO ↓↓↓
         seenMessageIds.delete(tempMsgId);
     });
-}
-
-// Setar nome - CORRIGIDA
-function setName() {
-    console.log('Função setName chamada');
-    let name = nameInput.value.trim();
-    console.log('Nome digitado:', name);
-    
-    if (!name) {
-        console.log('Nome vazio, não entrando no chat');
-        return;
-    }
-    
-    username = name;
-    seenMessageIds.clear();
-    pendingMessageId = null;
-    
-    console.log('Escondendo nameSetup e mostrando chatArea');
-    nameSetup.style.display = 'none';
-    chatArea.style.display = 'flex';
-    
-    console.log('Nome setado:', username);
-    
-    // Iniciar polling
-    poll();
-    setInterval(poll, 1000);
 }
 
 // Função para fechar modal de emojis
@@ -845,20 +1018,7 @@ function closeEmojiModalFunc() {
     }
 }
 
-// Eventos básicos - CORRIGIDOS
-if (setNameBtn) {
-    setNameBtn.addEventListener('click', setName);
-    console.log('Evento do botão setName configurado');
-} else {
-    console.error('Botão setNameBtn não encontrado!');
-}
-
-if (nameInput) {
-    nameInput.addEventListener('keypress', e => { 
-        if (e.key === 'Enter') setName(); 
-    });
-}
-
+// Eventos básicos
 if (sendBtn) {
     sendBtn.addEventListener('click', send);
 }
@@ -937,8 +1097,10 @@ if (sendImageBtn) {
 // Evento para o botão de gravar áudio
 if (recordBtn) {
     recordBtn.addEventListener('click', () => {
-        audioRecordModal.style.display = 'flex';
-        resetAudioRecording();
+        if (audioRecordModal) {
+            audioRecordModal.style.display = 'flex';
+            resetAudioRecording();
+        }
     });
 }
 
@@ -999,36 +1161,16 @@ document.addEventListener('keydown', (e) => {
     }
 });
 
-// Início - VERIFICAR DISPLAY INICIAL
-console.log('Inicializando display...');
-if (nameSetup) {
-    nameSetup.style.display = 'block';
-} else {
-    console.error('Elemento nameSetup não encontrado!');
-}
-
+//INICIALIZAR CHAT COM SESSÃO
+console.log('🚀 Inicializando chat com sessão...');
 if (chatArea) {
     chatArea.style.display = 'none';
-} else {
-    console.error('Elemento chatArea não encontrado!');
 }
 
-console.log('=== DEBUG IMAGENS ===');
-console.log('attach-btn:', document.getElementById('attach-btn'));
-console.log('file-input:', document.getElementById('file-input'));
-console.log('imagePreviewModal:', document.getElementById('image-preview-modal'));
+// Inicializar quando DOM estiver pronto
+document.addEventListener('DOMContentLoaded', initializeChat);
 
-// Verificar se o botão está no DOM
-setTimeout(() => {
-    const attachBtn = document.getElementById('attach-btn');
-    if (!attachBtn) {
-        console.error('❌ BOTÃO attach-btn NÃO ENCONTRADO NO DOM!');
-    } else {
-        console.log('✅ Botão attach-btn encontrado');
-        // Forçar estilos para garantir que é visível
-        attachBtn.style.display = 'inline-block';
-        attachBtn.style.visibility = 'visible';
-        attachBtn.style.opacity = '1';
-    }
-}, 1000);
-// ↑↑↑ CÓDIGO DE DEBUG ↑↑↑
+// Debug
+console.log('=== DEBUG CHAT SEM LOGIN ===');
+console.log('chat-area:', document.getElementById('chat-area'));
+console.log('messages:', document.getElementById('messages'));
